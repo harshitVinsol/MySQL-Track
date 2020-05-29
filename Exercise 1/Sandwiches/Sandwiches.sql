@@ -81,7 +81,7 @@ ALTER TABLE Locations
 MODIFY Phone VARCHAR(10);
 
 /*for each location the number of people who can eat there*/
-SELECT Location, COUNT(*) AS "NUMBER OF PEOPLE" from Locations
+SELECT LName, COUNT(*) AS "NUMBER OF PEOPLE" from Locations
 INNER JOIN Sandwiches
 ON Sandwiches.Location = Locations.LName
-GROUP BY Location;
+GROUP BY LName;
