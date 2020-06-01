@@ -83,6 +83,7 @@ MODIFY Phone VARCHAR(10);
 /*for each location the number of people who can eat there*/
 INSERT INTO Locations
 VALUES('Delhi', '999999', 'Hauz Khas');
+
 SELECT Locations.LName, COUNT(DISTINCT Tastes.Name) AS Number_Of_People FROM Sandwiches
 RIGHT JOIN Locations
 ON Sandwiches.location = Locations.lname
