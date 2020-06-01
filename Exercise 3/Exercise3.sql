@@ -1,3 +1,4 @@
+CREATE DATABASE test;
 use test;
 
 CREATE TABLE Authors(
@@ -142,6 +143,19 @@ INNER JOIN Comments
 ON Articles.id = Comments.ArticleId
 WHERE Authors.Name = 'William Wordsford';
 
+/*Nested Solution of Query 3 */
+
+SELECT Heading, ar.Content, cm.Content as Comment
+FROM Articles AS ar, (
+	SELECT Content, ArticleId FROM Comments
+) as cm
+WHERE AuthorId IN (
+	SELECT id 
+    FROM Authors 
+    WHERE Name = 'William Wordsford'
+)
+AND ar.id = cm.ArticleId;
+
 /*Query 4*/
 SELECT * FROM Articles
 LEFT JOIN Comments
@@ -154,12 +168,11 @@ WHERE id NOT IN(
 );
 
 /*Query 5*/
-SELECT * FROM (
-SELECT Articles.id, Articles.Content, COUNT(Comments.Content) AS comment_count from Articles
+SELECT Articles.id, Articles.Content, COUNT(Comments.Content) AS Comment_Count from Articles
 INNER JOIN Comments
 ON Comments.ArticleId = Articles.id
-GROUP BY Articles.id)combined_blog
-ORDER BY comment_count DESC
+GROUP BY Articles.id
+ORDER BY Comment_Count DESC
 LIMIT 1;
 
 /*Query 6*/
