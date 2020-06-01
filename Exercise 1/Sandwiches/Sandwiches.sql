@@ -81,7 +81,12 @@ ALTER TABLE Locations
 MODIFY Phone VARCHAR(10);
 
 /*for each location the number of people who can eat there*/
-SELECT LName, COUNT(*) AS "NUMBER OF PEOPLE" from Locations
-INNER JOIN Sandwiches
-ON Sandwiches.Location = Locations.LName
-GROUP BY LName;
+INSERT INTO Locations
+VALUES('Delhi', '999999', 'Hauz Khas');
+SELECT Locations.LName, COUNT(DISTINCT Tastes.Name) AS Number_Of_People FROM Sandwiches
+RIGHT JOIN Locations
+ON Sandwiches.location = Locations.lname
+LEFT JOIN Tastes
+ON Sandwiches.filling = Tastes.filling
+GROUP BY Locations.LName
+ORDER BY Number_Of_People;
