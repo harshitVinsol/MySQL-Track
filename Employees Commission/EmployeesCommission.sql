@@ -1,87 +1,97 @@
-CREATE DATABASE commission;
+CREATE DATABASE new_commission;
 
-USE commission;
+USE new_commission;
 
-CREATE TABLE Departments(
-	id VARCHAR(2) NOT NULL,
-    Name VARCHAR(20) NOT NULL,
+CREATE TABLE departments(
+	id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL,
     PRIMARY KEY (id)
 );
 
-INSERT INTO Departments
-VALUES('1', 'Banking'),
-('2', 'Insurance'),
-('3', 'Services');
-
-SELECT * FROM Departments;
-
-CREATE TABLE Employees(
-	id VARCHAR(2) NOT NULL,
-    Name VARCHAR(30) NOT NULL,
-    Salary INT,
-    DepartmentId VARCHAR(2),
+CREATE TABLE employees(
+	id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(30) NOT NULL,
+    salary INT,
+    departmentId INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (DepartmentId) REFERENCES Departments(id)
+    FOREIGN KEY (departmentId) REFERENCES departments(id)
 );
 
-INSERT INTO Employees
-VALUES('1', 'Chris Gayle', 1000000, '1'),
-('2', 'Michael Clark', 800000, '2'),
-('3', 'Rahul Dravid', 700000, '1'),
-('4', 'Ricky Ponting', 600000, '2'),
-('5', 'Albie Morkel', 650000, '2'),
-('6', 'Wasim Akram', 750000, '3');
-
-SELECT * FROM Employees;
-
-CREATE TABLE Commissions(
-	id VARCHAR(2) NOT NULL,
-    EmployeeId VARCHAR(2) NOT NULL,
-    Commission_Amount INT,
+CREATE TABLE commissions(
+	id INT NOT NULL AUTO_INCREMENT,
+    employeeId INT NOT NULL,
+    commission_amount INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (EmployeeId) REFERENCES Employees(id)
+    FOREIGN KEY (employeeId) REFERENCES employees(id)
 );
 
-INSERT INTO Commissions
-VALUES('1', '1', 5000),
-('2', '2', 3000),
-('3', '3', 4000),
-('4', '1', 4000),
-('5', '2', 3000),
-('6', '4', 2000),
-('7', '5', 1000),
-('8', '6', 5000);
+INSERT INTO departments(name)
+VALUES('Banking'),
+('Insurance'),
+('Services');
 
-SELECT * FROM Commissions;
+SELECT * FROM departments;
 
-ALTER TABLE Employees
-MODIFY DepartmentId VARCHAR(2) NOT NULL;
+INSERT INTO employees(name, salary, departmentId)
+VALUES('Chris Gayle', 1000000, 1),
+('Michael Clark', 800000, 2),
+('Rahul Dravid', 700000, 1),
+('Ricky Ponting', 600000, 2),
+('Albie Morkel', 650000, 2),
+('Wasim Akram', 750000, 3);
+
+SELECT * FROM employees;
+
+INSERT INTO commissions(employeeId, commission_amount)
+VALUES(1, 5000),
+(2, 3000),
+(3, 4000),
+(1, 4000),
+(2, 3000),
+(4, 2000),
+(5, 1000),
+(6, 5000);
+
+SELECT * FROM commissions;
 
 /*Queries*/
-
-SELECT Employees.Name,SUM(Commission_Amount) AS total_commision FROM Employees
-INNER JOIN Commissions
-ON Employees.id = Commissions.EmployeeId
-GROUP BY Employees.id
+/* 1 */
+SELECT employees.name,SUM(commission_amount) AS total_commision FROM employees
+INNER JOIN commissions
+ON employees.id = commissions.employeeId
+GROUP BY employees.id
 ORDER BY total_commision DESC
 LIMIT 1;
 
-SELECT Name, Salary FROM Employees
-ORDER BY Salary DESC
+/* 2 */
+SELECT name, salary FROM employees
+ORDER BY salary DESC
 LIMIT 3,1;
 
-SELECT Departments.id, Departments.Name, SUM(Commissions.Commission_Amount) AS Total_Commission_Amount FROM Departments
-INNER JOIN Employees
-ON Departments.id = Employees.DepartmentId
-INNER JOIN Commissions
-ON Commissions.EmployeeId = Employees.id
-GROUP BY DepartmentId
+/* 3 */
+SELECT departments.id, departments.name, SUM(commissions.commission_amount) AS Total_Commission_Amount 
+FROM departments
+INNER JOIN employees
+ON departments.id = employees.DepartmentId
+INNER JOIN commissions
+ON commissions.employeeId = employees.id
+GROUP BY departmentId
 ORDER BY Total_Commission_Amount DESC
 LIMIT 1;
 
-SELECT GROUP_CONCAT(Name,' ',Total_Commision) AS "Commission > 3000" FROM (
-SELECT Employees.Name,SUM(commission_amount) AS total_commision from Employees
-INNER JOIN Commissions
-ON Commissions.EmployeeId = Employees.id
-GROUP BY EmployeeId
-HAVING total_commision > 3000) combined;
+/* 4 */
+
+SELECT GROUP_CONCAT(name,' ',total_commission) AS "Commission > 3000" FROM (
+	SELECT employees.name,SUM(commission_amount) AS total_commission from employees
+	INNER JOIN commissions
+	ON commissions.employeeId = employees.id
+	GROUP BY employeeId
+	HAVING total_commission > 3000
+) combined_result;
+
+/* Indexing */
+ALTER TABLE commissions
+ADD INDEX index_commission (commission_amount);
+
+ALTER TABLE employees
+ADD INDEX index_employees (salary);
