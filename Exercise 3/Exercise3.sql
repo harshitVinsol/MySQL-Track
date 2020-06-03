@@ -143,18 +143,17 @@ INNER JOIN Comments
 ON Articles.id = Comments.ArticleId
 WHERE Authors.Name = 'William Wordsford';
 
-/*Nested Solution of Query 3 */
-
-SELECT Heading, ar.Content, cm.Content as Comment
-FROM Articles AS ar, (
-	SELECT Content, ArticleId FROM Comments
-) as cm
-WHERE AuthorId IN (
-	SELECT id 
-    FROM Authors 
-    WHERE Name = 'William Wordsford'
+/* Query 3 using sub query approach */
+SELECT Articles.Heading, Articles.Content, Comments.Content
+FROM Articles, Comments
+WHERE Comments.ArticleId IN (
+	SELECT id FROM Articles WHERE AuthorId = (
+		SELECT id FROM Authors
+		WHERE Name = 'William Wordsford'
+	)
 )
-AND ar.id = cm.ArticleId;
+AND
+Articles.id = Comments.ArticleId;
 
 /*Query 4*/
 SELECT * FROM Articles
