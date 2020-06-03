@@ -28,6 +28,7 @@ We can make user_id as a primary key which will eventually act as an index and o
 
 /* 3 */
 The order of indexing should be commentable_id, commentable_type and user_id.
+Reference: https://www.mysqltutorial.org/mysql-index/mysql-composite-index/
 
 /* 4 */
 Using JOIN
