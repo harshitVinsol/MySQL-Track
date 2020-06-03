@@ -42,6 +42,7 @@ ON Users.AccountNo = Accounts.AccountNo
 SET Balance = Balance + 1000
 WHERE Users.Name = 'Harshit Singh'; 
 
+EXPLAIN
 UPDATE Accounts
 INNER JOIN Users
 ON Users.AccountNo = Accounts.AccountNo
