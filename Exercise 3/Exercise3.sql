@@ -1,182 +1,184 @@
-CREATE DATABASE test;
-use test;
+CREATE DATABASE books;
 
-CREATE TABLE Authors(
-	id VARCHAR(4) NOT NULL,
-    Name VARCHAR(20),
+use books;
+
+CREATE TABLE authors(
+	id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(20),
     PRIMARY KEY(id)
 );
 
-INSERT INTO Authors
-VALUES('1', 'Shakespeare'),
-('2', 'William Wordsford'),
-('3', 'Prem Chand');
+INSERT INTO authors(name)
+VALUES('Shakespeare'),
+('William Wordsford'),
+('Prem Chand');
 
-SELECT * FROM Authors;
+SELECT * FROM authors;
 
-CREATE TABLE Categories(
-	id VARCHAR(4) NOT NULL,
-    Name VARCHAR(20),
+CREATE TABLE categories(
+	id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(20),
     PRIMARY KEY(id)
 );
 
-INSERT INTO Categories
-VALUES('1', 'Fiction'),
-('2', 'Non Fiction'),
-('3', 'Auto Biography'),
-('4', 'Thriller'),
-('5', 'Adventure');
+INSERT INTO categories(name)
+VALUES('Fiction'),
+('Non Fiction'),
+('Auto Biography'),
+('Thriller'),
+('Adventure');
 
-SELECT * FROM Categories;
+SELECT * FROM categories;
 
-CREATE TABLE Articles(
-	id VARCHAR(4) NOT NULL,
-    AuthorId VARCHAR(4) NOT NULL,
-    CategoryId VARCHAR(4) NOT NULL,
-    Heading VARCHAR(80),
-    Content VARCHAR(1000),
+CREATE TABLE articles(
+	id INT NOT NULL AUTO_INCREMENT,
+    author_id INT NOT NULL,
+    category_id INT NOT NULL,
+    heading VARCHAR(80),
+    content VARCHAR(1000),
     PRIMARY KEY (id),
-    FOREIGN KEY (AuthorId) REFERENCES Authors(id),
-    FOREIGN KEY (CategoryId) REFERENCES Categories(id)
+    FOREIGN KEY (author_id) REFERENCES authors(id),
+    FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
-INSERT INTO Articles
-VALUES('1', '1', '2', 'Julies Ceaser', 'This is a long story'),
-('2', '2', '3', 'My Life My Rules', 'This is the story of my life'),
-('3','2','5', 'Indo Pak War', 'This story is about the Indo Pak War of 1999');
-INSERT INTO Articles
-VALUES('4','3', '2', 'Demo Heading', 'Demo Content');
+INSERT INTO articles(author_id, category_id, heading, content)
+VALUES(1, 2, 'Julies Ceaser', 'This is a long story'),
+(2, 3, 'My Life My Rules', 'This is the story of my life'),
+(2, 5, 'Indo Pak War', 'This story is about the Indo Pak War of 1999');
+INSERT INTO articles(author_id, category_id, heading, content)
+VALUES(3, 2, 'Demo Heading', 'Demo Content');
 
-SELECT * FROM Articles;
+SELECT * FROM articles;
 
-CREATE TABLE Users(
-	id VARCHAR(4) NOT NULL,
-    Type ENUM('Admin', 'Normal') NOT NULL,
-    Name VARCHAR(20),
+CREATE TABLE users(
+	id INT NOT NULL AUTO_INCREMENT,
+    type ENUM('Admin', 'Normal') NOT NULL,
+    name VARCHAR(20),
     PRIMARY KEY (id)
 );
 
-INSERT INTO Users
-VALUES('1', 'Admin', 'Harshit'),
-('2', 'Normal', 'Nitesh'),
-('3', 'Normal', 'Nitin');
+INSERT INTO users(type, name)
+VALUES('Admin', 'Harshit'),
+('Normal', 'Nitesh'),
+('Normal', 'Nitin');
 
 SELECT * FROM Users;
 
-CREATE TABLE Comments(
-	id VARCHAR(4) NOT NULL,
-    Content VARCHAR(200),
-    ArticleId VARCHAR(4),
-    UserId VARCHAR(4),
+CREATE TABLE comments(
+	id INT NOT NULL AUTO_INCREMENT,
+    content VARCHAR(200),
+    article_id INT,
+    user_id INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (ArticleId) REFERENCES Articles(id),
-    FOREIGN KEY (UserId) REFERENCES Users(id)
+    FOREIGN KEY (article_id) REFERENCES articles(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
     
-INSERT INTO Comments
-VALUES('1', 'This is a good comment', '1', '1'),
-('2', 'This is a normal comment', '3', '2'),
-('3', 'This is a bad comment','2', '3'),
-('4', 'This is a demo comment', '1', '2');
+INSERT INTO comments(content, article_id, user_id)
+VALUES('This is a good comment', 1, 1),
+('This is a normal comment', 3, 2),
+('This is a bad comment',2, 3),
+('This is a demo comment', 1, 2);
 
-SELECT * FROM Comments;
+SELECT * FROM comments;
 
 /*Queries*/
 /*Query 1*/
-INSERT INTO Categories
-VALUES('6', 'War');
+INSERT INTO categories(name)
+VALUES('War');
 
-UPDATE Categories
-SET Name = 'Love Stories'
-WHERE id = '6'; 
+UPDATE categories
+SET name = 'Love Stories'
+WHERE id = 6; 
 
-DELETE FROM Categories
-WHERE id = '6';
+DELETE FROM categories
+WHERE id = 6;
 
-INSERT INTO Articles
-VALUES('4', '1', '2', 'Android Development', 'This is an article about Android Jetpack');
+INSERT INTO articles(author_id, category_id, heading, content)
+VALUES(1, 2, 'Android Development', 'This is an article about Android Jetpack');
 
-UPDATE Articles
+UPDATE articles
 SET Content = 'This is an article about Intents in Android'
-WHERE id = '4';
+WHERE id = 4;
 
-DELETE FROM Articles
-WHERE id = '4';
+DELETE FROM articles
+WHERE id = 4;
 
-INSERT INTO Comments
-VALUES('5', 'This is an average comment', '1', '2');
+INSERT INTO comments(content, article_id, user_id)
+VALUES('This is an average comment', 1, 2);
 
-UPDATE Comments
+UPDATE comments
 SET Content = 'This is a good comment'
-WHERE id = '4';
+WHERE id = 4;
 
-DELETE FROM Comments
-WHERE id = '4';
+DELETE FROM comments
+WHERE id = 4;
 
-INSERT INTO Users
-VALUES('4', 'Admin', 'Apoorv');
+INSERT INTO users(type, name)
+VALUES('Admin', 'Apoorv');
 
-UPDATE Users
+UPDATE users
 SET Type = 'Normal'
-WHERE id = '4';
+WHERE id = 4;
 
-DELETE FROM Users
-WHERE id = '4';
+DELETE FROM users
+WHERE id = 4;
 
 /*Query 2 Assuming user3 as William Wordsford*/
-SELECT * FROM Articles
-INNER JOIN Authors
-ON Articles.AuthorId = Authors.id
-WHERE Authors.Name = 'William Wordsford';
+SELECT * FROM articles
+INNER JOIN authors
+ON articles.author_id = authors.id
+WHERE authors.name = 'William Wordsford';
 
 SET @authorName = 'William Wordsford';
-SELECT * FROM Articles
-INNER JOIN Authors
-ON Articles.AuthorId = Authors.id
-WHERE Authors.Name = @authorName;
+SELECT * FROM articles
+INNER JOIN authors
+ON articles.author_id = authors.id
+WHERE authors.name = @authorName;
 
 /*Query 3*/
-SELECT Heading, Articles.Content, Comments.Content as Comments FROM Articles
-INNER JOIN Authors
-ON Articles.AuthorId = Authors.id
-INNER JOIN Comments
-ON Articles.id = Comments.ArticleId
-WHERE Authors.Name = 'William Wordsford';
+SELECT heading, articles.content, comments.content as Comments 
+FROM articles
+INNER JOIN authors
+ON articles.author_id = authors.id
+INNER JOIN comments
+ON articles.id = comments.article_id
+WHERE authors.name = 'William Wordsford';
 
 /* Query 3 using sub query approach */
-SELECT Articles.Heading, Articles.Content, Comments.Content
-FROM Articles, Comments
-WHERE Comments.ArticleId IN (
-	SELECT id FROM Articles WHERE AuthorId = (
-		SELECT id FROM Authors
+SELECT articles.heading, articles.content, comments.content
+FROM articles, comments
+WHERE comments.article_id IN (
+	SELECT id FROM articles WHERE author_id = (
+		SELECT id FROM authors
 		WHERE Name = 'William Wordsford'
 	)
 )
 AND
-Articles.id = Comments.ArticleId;
+articles.id = comments.article_id;
 
 /*Query 4*/
-SELECT * FROM Articles
-LEFT JOIN Comments
-ON Comments.ArticleId = Articles.id
-WHERE Comments.id is NULL;
+SELECT * FROM articles
+LEFT JOIN comments
+ON comments.article_id = articles.id
+WHERE comments.id is NULL;
 
-SELECT * FROM Articles
+SELECT * FROM articles
 WHERE id NOT IN(
-	SELECT ArticleId FROM Comments
+	SELECT article_id FROM comments
 );
 
 /*Query 5*/
-SELECT Articles.id, Articles.Content, COUNT(Comments.Content) AS Comment_Count from Articles
-INNER JOIN Comments
-ON Comments.ArticleId = Articles.id
-GROUP BY Articles.id
+SELECT articles.id, articles.content, COUNT(comments.content) AS Comment_Count from articles
+INNER JOIN comments
+ON comments.article_id = articles.id
+GROUP BY articles.id
 ORDER BY Comment_Count DESC
 LIMIT 1;
 
 /*Query 6*/
-SELECT Articles.id, Articles.Content FROM Articles
-LEFT JOIN Comments
-ON Comments.ArticleId = Articles.id
+SELECT articles.id, articles.content FROM articles
+LEFT JOIN comments
+ON comments.article_id = articles.id
 GROUP BY id
-HAVING COUNT(Comments.Content) <= 1;
+HAVING COUNT(comments.content) <= 1;
