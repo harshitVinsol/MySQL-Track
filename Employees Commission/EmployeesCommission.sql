@@ -56,7 +56,7 @@ SELECT * FROM commissions;
 
 /*Queries*/
 /* 1 */
-SELECT employees.name,SUM(commission_amount) AS total_commision FROM employees
+EXPLAIN SELECT employees.name,SUM(commission_amount) AS total_commision FROM employees
 INNER JOIN commissions
 ON employees.id = commissions.employeeId
 GROUP BY employees.id
@@ -79,15 +79,13 @@ GROUP BY departmentId
 ORDER BY Total_Commission_Amount DESC
 LIMIT 1;
 
-/* 4 */
-
-SELECT GROUP_CONCAT(name,' ',total_commission) AS "Commission > 3000" FROM (
-	SELECT employees.name,SUM(commission_amount) AS total_commission from employees
-	INNER JOIN commissions
-	ON commissions.employeeId = employees.id
-	GROUP BY employeeId
-	HAVING total_commission > 3000
-) combined_result;
+/* Updated Query 4 */
+SELECT GROUP_CONCAT(name) AS Employee_Name, commission_amount AS Commission 
+FROM commissions
+INNER JOIN employees
+ON employees.id = commissions.employeeId
+GROUP BY commission_amount
+HAVING commission_amount > 3000;
 
 /* Indexing */
 ALTER TABLE commissions
@@ -95,3 +93,9 @@ ADD INDEX index_commission (commission_amount);
 
 ALTER TABLE employees
 ADD INDEX index_employees (salary);
+
+ALTER TABLE commissions
+DROP INDEX index_commission;
+
+ALTER TABLE employees
+DROP INDEX index_employees;
