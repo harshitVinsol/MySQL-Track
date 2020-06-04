@@ -80,7 +80,7 @@ ORDER BY Total_Commission_Amount DESC
 LIMIT 1;
 
 /* Updated Query 4 */
-SELECT GROUP_CONCAT(name) AS Employee_Name, commission_amount AS Commission 
+SELECT GROUP_CONCAT(DISTINCT name) AS Employee_Name, commission_amount AS Commission 
 FROM commissions
 INNER JOIN employees
 ON employees.id = commissions.employeeId
