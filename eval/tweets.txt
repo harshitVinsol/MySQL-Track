@@ -1,0 +1,134 @@
+use twitter;
+
+/* Query 1 */
+SELECT a.name, b.name
+FROM users AS a
+INNER JOIN relationships
+ON a.id = relationships.user_id
+INNER JOIN users AS b
+ON b.id = relationships.following_id;
+
+Output:
++-------+-------+
+| name  | name  |
++-------+-------+
+| Akhil | Manik |
+| Akhil | Amit  |
+| Akhil | Kapil |
+| Akhil | Ankur |
+| Akhil | Suman |
+| John  | Ryan  |
+| Ryan  | John  |
+| Kapil | Akhil |
+| Kapil | Manik |
+| Kapil | Suman |
+| Ankur | Akhil |
+| Ankur | Manik |
+| Ankur | Amit  |
+| Ankur | Rahul |
+| Ankur | Kapil |
+| Ankur | John  |
+| Ankur | Ryan  |
+| Ankur | Sunil |
+| Ankur | Suman |
++-------+-------+
+
+/* Query 2 */
+SELECT a.name, GROUP_CONCAT(DISTINCT b.name) as followings
+FROM users As a
+INNER JOIN relationships
+ON a.id = relationships.user_id
+INNER JOIN users AS b
+ON b.id = relationships.following_id
+GROUP BY a.name
+ORDER BY(COUNT(following_id)) DESC;
+
+Output:
++-------+----------------------------------------------------+
+| name  | followings                                         |
++-------+----------------------------------------------------+
+| Ankur | Akhil,Amit,John,Kapil,Manik,Rahul,Ryan,Suman,Sunil |
+| Akhil | Amit,Ankur,Kapil,Manik,Suman                       |
+| Kapil | Akhil,Manik,Suman                                  |
+| John  | Ryan                                               |
+| Ryan  | John                                               |
++-------+----------------------------------------------------+
+
+/* Query 3 */
+SELECT name, content, created_at
+FROM users
+INNER JOIN tweets
+ON tweets.user_id = users.id
+WHERE users.id = 1
+UNION
+SELECT b.name, content, created_at
+FROM users AS a
+INNER JOIN relationships
+ON a.id = relationships.user_id
+INNER JOIN users AS b
+ON b.id = relationships.following_id
+INNER JOIN tweets
+ON b.id = tweets.user_id
+WHERE a.id = 1
+ORDER by created_at DESC;
+
+Output:
++-------+-------------------------------------------------+---------------------+
+| name  | content                                         | created_at          |
++-------+-------------------------------------------------+---------------------+
+| Akhil | Its raining                                     | 2012-08-07 12:57:43 |
+| Manik | Stop playing twitter twitter, focus on your job | 2012-08-07 12:55:46 |
+| Ankur | Thanks for letting me know                      | 2012-08-07 12:54:51 |
+| Ankur | Nokis is a nice mobile company                  | 2012-08-07 12:54:20 |
+| Kapil | I am at vinsol                                  | 2012-08-07 12:53:59 |
+| Suman | Lets test this...                               | 2012-08-07 12:53:18 |
+| Akhil | lorem ipsum                                     | 2012-08-07 12:53:01 |
+| Manik | Hello there                                     | 2012-08-07 12:52:46 |
+| Manik | Test tweet.                                     | 2012-08-07 12:52:38 |
+| Akhil | My first ever tweet.                            | 2012-08-07 12:52:11 |
++-------+-------------------------------------------------+---------------------+
+
+/* Query 4 */
+SELECT name, COUNT(content) as total_tweets
+FROM users
+LEFT JOIN tweets  /* used LEFT JOIN if the user has an account but did not tweet. */
+ON users.id = tweets.user_id
+GROUP BY name;
+
+Output:
++-------+--------------+
+| name  | total_tweets |
++-------+--------------+
+| Akhil |            3 |
+| Manik |            3 |
+| Amit  |            0 |
+| Rahul |            1 |
+| Kapil |            1 |
+| John  |            1 |
+| Ryan  |            2 |
+| Sunil |            1 |
+| Ankur |            2 |
+| Suman |            1 |
++-------+--------------+
+
+/* Query 5 */
+SELECT name
+FROM users
+LEFT JOIN tweets
+ON users.id = tweets.user_id
+GROUP BY name
+HAVING COUNT(content) = 0;
+
+Output:
++------+
+| name |
++------+
+| Amit |
++------+
+
+/* Query 6 */
+SELECT users.name, tweets.content
+FROM tweets
+INNER JOIN users
+ON users.id = tweets.user_id
+WHERE created_at >= DATE_SUB(NOW(),INTERVAL 1 HOUR);
